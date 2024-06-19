@@ -330,7 +330,7 @@ const ethNetwork: any = {
             decimals: 18,
             symbol: 'MATIC'
         },
-        rpcUrls: ['https://rpc.ankr.com/polygon_mumbai'],
+        rpcUrls: ['https://polygon-mumbai.api.onfinality.io/public'],
         blockExplorerUrls: ['https://mumbai.polygonscan.com']
     }
     ,
