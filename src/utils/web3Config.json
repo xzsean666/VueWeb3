@@ -1,0 +1,39 @@
+{
+    "development": {
+        "NETWORK": {
+            "polygon":  ["https://matic-mumbai.chainstacklabs.com"],
+            "bsc": ["https://bsc-testnet.public.blastapi.io"],
+            "psc": ["https://seed0.PolySmartChain.com"]
+        },
+        "contract": {
+            "polygon": {
+                "usdt": ["0xbf3aEF85beaB981142bfC718Cc978f36d01004Ee"]
+            },
+            "bsc": {
+                "usdt": ["0xD021dbE60FA9548F2995881DECD163334A1fAC64"]
+            },
+            "psc": {
+                "usdt": ["0xb0D0322C362A847131d5e28De0b8A39DE30745dc"]
+            }
+        }
+    },
+    "production": {
+        "NETWORK": {
+            "polygon":["https://polygon-rpc.com/"],
+            "bsc": ["https://bsc-dataseed1.binance.org"],
+            "psc": ["https://seed0.PolySmartChain.com"]
+        },
+        "contract": {
+            "polygon": {
+                "usdt": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
+            },
+            "bsc": {
+                "usdt": "0x55d398326f99059fF775485246999027B3197955"
+            },
+            "psc": {
+                "usdt": "0x9a00EbF48666227e87bf2E1951823666CD3D474e"
+            }
+        }
+    }
+
+}
