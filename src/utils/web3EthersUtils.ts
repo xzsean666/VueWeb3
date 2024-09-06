@@ -1,14 +1,29 @@
 import { ethers } from 'ethers';
-import { ERC20ABI } from "./web3CommonData";
-// import { HDPrivateKey } from 'bitcore-lib';
 
-class ethersClientUtils {
+function retry(fn:any, retries = 3, delay = 1000) {
+    return async function(...args:any) {
+        let attempts = 0;
+        while (attempts < retries) {
+            try {
+                return await fn(...args);
+            } catch (error) {
+                attempts++;
+                if (attempts >= retries) {
+                    throw error;
+                }
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+    };
+}
+export class ethersClientUtils {
     web3: ethers.JsonRpcProvider;
     NODE_PROVIDER: string;
-    constructor(NODE_PROVIDER: string) {
+    retryConfig:any;
+    constructor(NODE_PROVIDER: string , retryConfig={retries:3,delay:1000}) {
         this.web3 = new ethers.JsonRpcProvider(NODE_PROVIDER)
         this.NODE_PROVIDER = NODE_PROVIDER
-        // this.web3._getConnection().timeout = 12000
+        this.retryConfig =  retryConfig
     }
     async getLatestBlock() {
         const result = this.web3.getBlockNumber()
@@ -75,46 +90,27 @@ class ethersClientUtils {
         // await tx.wait()
         return tx
     }
-    async excuteReadFunction(contractAbi: any[], contractAddress: string, fnName: string, ...fnArgs: any[]) {
+    async excuteReadFunction(contractAbi: any[], contractAddress: string, fnName: string, ...fnArgs:any) {
         const ct = await this.createContract(contractAbi, contractAddress)
         const result = await eval("ct." + fnName)(...fnArgs)
+        return result
+    }
+    async excuteReadFunctionWithRetry(contractAbi: any[], contractAddress: string, fnName: string, ...fnArgs: any[]) {
+        const fn = retry(this.excuteReadFunction,this.retryConfig.retries,this.retryConfig.delay)
+        const result = await fn(contractAbi, contractAddress, fnName, ...fnArgs)
         return result
     }
     async excuteWriteFunction(contractAbi: any[], contractAddress: string, fnName: string, hexPrivateKey: string, ...fnArgs: any[]) {
         const ct = await this.createConectedContract(contractAbi, contractAddress, hexPrivateKey)
         const tx = await eval("ct." + fnName)(...fnArgs)
-        // console.log(tx);
-
-        // await tx.wait()
         return tx
     }
-    async ERC20TokenDecimals(contractAddress: string) {
-        const ct = await this.createContract(ERC20ABI, contractAddress)
-        const result = await ct.decimals()
+    async excuteWriteFunctionWithRetry(contractAbi: any[], contractAddress: string, fnName: string, ...fnArgs: any[]) {
+        const fn = retry(this.excuteWriteFunction,this.retryConfig.retries,this.retryConfig.delay)
+        const result = await fn(contractAbi, contractAddress, fnName, ...fnArgs)
         return result
     }
-    async ERC20TokenTotalSuply(contractAddress: string) {
-        const result = this.excuteReadFunction(ERC20ABI, contractAddress, 'totalSupply')
-        return result
-    }
-    async ERC20BalanceOfToken(address: string, contractAddress: string) {
-        const result = this.excuteReadFunction(ERC20ABI, contractAddress, 'balanceOf', address)
-        return result
-    }
-    async ERC20EtherBalanceOfToken(address: string, contractAddress: string) {
-        const decimals = this.ERC20TokenDecimals(contractAddress)
-        const balanceOfWei = this.excuteReadFunction(ERC20ABI, contractAddress, 'balanceOf', address)
-        const result = await Promise.all([decimals, balanceOfWei])
-        const balanceOfEther = Number(result[1]) / 10 ** Number(result[0])
-        return balanceOfEther
-    }
-    async ERC20TokenTransfer(toAddress: string, valueEther: string, contractAddress: string, hexPrivateKey: string) {
-        const decimals = await this.ERC20TokenDecimals(contractAddress)
-        const valueWei = ethers.parseUnits(valueEther, Number(decimals))
-        const result = await this.excuteWriteFunction(ERC20ABI, contractAddress, "transfer", hexPrivateKey, toAddress, valueWei)
-        return result
-    }
-
 }
+
 
 export default ethersClientUtils

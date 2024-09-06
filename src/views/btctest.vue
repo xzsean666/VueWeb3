@@ -24,13 +24,11 @@
 </template>
 
 <script setup lang="ts">
-import btcUtils from "../utils/btcUtils";
-import { BitcoinUtils, mempoolAPI } from "../utils/BitcoinUtils";
 
+import { BitcoinUtils, mempoolAPI } from "../utils/BitcoinUtils";
 
 const btcnet = "testnet"
 const bitcoin = new BitcoinUtils(btcnet)
-const btc = new btcUtils(btcnet)
 const mempool = new mempoolAPI(btcnet)
 const TEST = {
     "privateKey": "37932363bc199f4929cce374a00daf34632ad2a229873edb2d7b9c7c635d3ab6",
@@ -133,23 +131,23 @@ const bitcoinbuildRawTransaction = async () => {
 
 
 const btccreateWallet = () => {
-    btc.createWallet().then(e => {
+    btc.createWallet().then((e: any) => {
         console.log(e);
     })
 }
 const btccreateHDWallet = () => {
-    btc.createHDWallet().then(e => {
+    btc.createHDWallet().then((e: any) => {
         console.log(e);
     })
 }
 const btcgetDetails = () => {
-    btc.getAddress(TEST.address, "getAddress").then(e => {
+    btc.getAddress(TEST.address, "getAddress").then((e: any) => {
         console.log(e);
     })
-    btc.getAddress(TEST1.address, "getAddress").then(e => {
+    btc.getAddress(TEST1.address, "getAddress").then((e: any) => {
         console.log(e);
     })
-    btc.getAddress(TEST2.address, "getAddress").then(e => {
+    btc.getAddress(TEST2.account.address, "getAddress").then((e: any) => {
         console.log(e);
     })
     // btc.getAddress(TEST.address, "getAddressTxsUtxo").then(e => {
@@ -157,12 +155,12 @@ const btcgetDetails = () => {
     // })
 }
 const btcbuildTransaction = () => {
-    btc.buildTransaction(TEST1.address, 0.0005, TEST0.segwitAddress, TEST0.privateKey).then(e => {
+    btc.buildTransaction(TEST1.address, 0.0005, TEST0.segwitAddress, TEST0.privateKey).then((e: any) => {
         console.log(e);
     })
 }
 const btcsendBitcoin = () => {
-    btc.sendBitcoin(TEST1.address, 0.0001, TEST.address, TEST.privateKey).then(e => {
+    btc.sendBitcoin(TEST1.address, 0.0001, TEST.address, TEST.privateKey).then((e: any) => {
         console.log(e);
     })
 }
